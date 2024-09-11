@@ -11,12 +11,11 @@ from app.models import User, Convite
 
 csrf = CSRFProtect()
 
-def format_currency(value,  decimal_places=2, grouping=True):
+def format_currency(value, decimal_places=2, grouping=True):
     """
-    Formata um valor como moeda com ou sem agrupamento de milhares.
+    Formata um valor como moeda com ou sem agrupamento de milhares no padrão brasileiro.
     
     :param value: O valor numérico a ser formatado.
-    :param currency_symbol: O símbolo da moeda a ser usado.
     :param decimal_places: O número de casas decimais a ser exibido.
     :param grouping: Se True, usa agrupamento de milhares.
     :return: O valor formatado como string.
@@ -29,12 +28,13 @@ def format_currency(value,  decimal_places=2, grouping=True):
         
         # Agrupamento de milhares
         integer_part = integer_part[::-1]
-        grouped_integer = ','.join([integer_part[i:i+3] for i in range(0, len(integer_part), 3)])[::-1]
+        grouped_integer = '.'.join([integer_part[i:i+3] for i in range(0, len(integer_part), 3)])[::-1]
         
-        return f"{grouped_integer}.{decimal_part}"
+        return f"R${grouped_integer},{decimal_part}"
     else:
         # Sem agrupamento de milhares
-        return f"{value:.{decimal_places}f}"
+        return f"R${value:.{decimal_places}f}"
+
 
 def create_app():
     app = Flask(__name__)
