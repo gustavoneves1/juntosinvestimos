@@ -8,13 +8,33 @@ from app.blueprints.desafios import chalenger_bp
 from app.ext.database import init_database, db
 from app.ext.email import email
 from app.models import User, Convite
-import locale
+
 csrf = CSRFProtect()
 
-# Configurar a localização para português do Brasil
-locale.setlocale(locale.LC_ALL, 'C')
-
-
+def format_currency(value,  decimal_places=2, grouping=True):
+    """
+    Formata um valor como moeda com ou sem agrupamento de milhares.
+    
+    :param value: O valor numérico a ser formatado.
+    :param currency_symbol: O símbolo da moeda a ser usado.
+    :param decimal_places: O número de casas decimais a ser exibido.
+    :param grouping: Se True, usa agrupamento de milhares.
+    :return: O valor formatado como string.
+    """
+    if grouping:
+        # Formatação com agrupamento de milhares
+        parts = f"{value:.{decimal_places}f}".split(".")
+        integer_part = parts[0]
+        decimal_part = parts[1]
+        
+        # Agrupamento de milhares
+        integer_part = integer_part[::-1]
+        grouped_integer = ','.join([integer_part[i:i+3] for i in range(0, len(integer_part), 3)])[::-1]
+        
+        return f"{grouped_integer}.{decimal_part}"
+    else:
+        # Sem agrupamento de milhares
+        return f"{value:.{decimal_places}f}"
 
 def create_app():
     app = Flask(__name__)
@@ -29,7 +49,6 @@ def create_app():
     
     init_database(app)
     
-   
     login_manager = LoginManager(app)
 
     @login_manager.user_loader
@@ -54,13 +73,7 @@ def create_app():
         return dict(convites_pendentes=0)
     
     @app.template_filter('format_currency')
-    def format_currency(value):
-        try:
-            return locale.currency(value, symbol=True, grouping=True)
-        except locale.Error:
-            return f"${value:,.2f}"  # Formatação padrão de moeda se o locale falhar
-
-
+    def format_currency_filter(value):
+        return format_currency(value)
 
     return app
-
