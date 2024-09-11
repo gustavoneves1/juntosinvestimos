@@ -12,7 +12,7 @@ import locale
 csrf = CSRFProtect()
 
 # Configurar a localização para português do Brasil
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+locale.setlocale(locale.LC_ALL, 'C')
 
 
 
@@ -55,7 +55,11 @@ def create_app():
     
     @app.template_filter('format_currency')
     def format_currency(value):
-        return locale.currency(value, symbol=True, grouping=True)
+        try:
+            return locale.currency(value, symbol=True, grouping=True)
+        except locale.Error:
+            return f"${value:,.2f}"  # Formatação padrão de moeda se o locale falhar
+
 
 
     return app
