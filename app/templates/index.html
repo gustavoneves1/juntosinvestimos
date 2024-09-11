@@ -274,7 +274,9 @@
                 <ul>
                     <li><a href="#inicio">Início</a></li>
                     <li><a href="#beneficios">Benefícios</a></li>
-                    <li><a href="#contato">Contato</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+
                 </ul>
             </nav>
         </div>
