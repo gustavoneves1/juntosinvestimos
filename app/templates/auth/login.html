@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card animate__animated animate__fadeInUp">
+    <h2>Login</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="login">Email</label>
+            <input type="text" id="login" name="login" required>
+        </div>
+        <div class="form-group">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+    </form>
+    <p>Não tem uma conta? <a href="{{ url_for('auth.register') }}">Registre-se</a></p>
+</div>
+
+<style>
+    .card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+
+
+{% endblock %}

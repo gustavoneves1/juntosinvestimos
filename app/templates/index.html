@@ -1,0 +1,353 @@
+{% include 'chat-template.html' %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 0px 0; /* Reduzido o padding */
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+        }
+
+        .logo {
+            width: 190px; /* Reduzido o tamanho do logo */
+            height: auto;
+            margin-right: 20px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin-left: auto;
+            margin: 0; /* Removido a margem */
+        }
+
+        nav ul li {
+            margin-left: 20px; /* Reduzido o espaço entre os itens do menu */
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.9rem; /* Reduzido o tamanho da fonte */
+        }
+
+        nav ul li a:hover {
+            color: #007bff;
+        }
+
+        #inicio {
+            background: linear-gradient(135deg, #4CAF50, #4CAF50);
+            color: #fff;
+            padding: 150px 0 100px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        #inicio p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        #beneficios {
+            padding: 100px 0;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+
+        .beneficios-lista {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .beneficio {
+            flex-basis: calc(33.333% - 40px);
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .beneficio:hover {
+            transform: translateY(-10px);
+        }
+
+        .beneficio img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        #depoimentos {
+            padding: 100px 0;
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .depoimento {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .depoimento p {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        #contato {
+            padding: 100px 0;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4CAF50;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .social-links a {
+            color: #fff;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .beneficio {
+                flex-basis: 100%;
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                width: 120px; /* Tamanho reduzido para telas menores */
+            }
+
+            nav {
+                flex-direction: row; /* Mantém o layout horizontal em telas menores */
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 15px; /* Adicionado padding horizontal */
+            }
+
+            nav ul {
+                margin-top: 0;
+            }
+
+            nav ul li {
+                margin-left: 10px;
+                margin-right: 0;
+            }
+
+            nav ul li a {
+                font-size: 0.8rem; /* Reduzido ainda mais o tamanho da fonte para telas menores */
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Seu Logo" class="logo">
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#beneficios">Benefícios</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="inicio">
+            <div class="container">
+                <h1>Juntos Investimos</h1>
+                <p>Ajudando você a controlar seu dinheiro guardado</p>
+                <a href="{{ url_for('auth.register') }}" class="cta-button">Comece Agora! É Gratis</a>
+            </div>
+        </section>
+
+        <section id="beneficios">
+            <div class="container">
+                <h2>Como iremos te ajudar?</h2>
+                <div class="beneficios-lista">
+                    <div class="beneficio">
+                        <i class=""></i>
+                        <h3>Controle Visual</h3>
+                        <p>Escolha uma meta e acompanhe visualmente ela crescendo</p>
+                    </div>
+                    <div class="beneficio">
+                        <i class=""></i>
+                        <h3>Convite Fácil</h3>
+                        <p>Descrição do benefício 2</p>
+                    </div>
+                    <div class="beneficio">
+                        <i class=""></i>
+                        <h3>Somos Gratuito 🫡</h3>
+                        <p>Descrição do benefício 3</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="depoimentos">
+            <div class="container">
+                <h2>O que as pessoas estão falando sobre?</h2>
+                <div class="depoimento">
+                    <p>"Consegui controlar o quanto eu meu namorado estavamos juntando"</p>
+                    <cite>- Maria Silva</cite>
+                </div>
+                <div class="depoimento">
+                    <p>"Muito fácil chamar um amigo pra fazer parte dos desafios"</p>
+                    <cite>- Igor Santos</cite>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato">
+            <div class="container">
+                <h2>Entre em contato</h2>
+                <form>
+                    <input type="text" name="nome" placeholder="Seu nome" required>
+                    <input type="email" name="email" placeholder="Seu e-mail" required>
+                    <textarea name="mensagem" placeholder="Sua mensagem" required></textarea>
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 InnevoResearch. Todos os direitos reservados.</p>
+            <div class="social-links">
+                <!-- <a href="#" target="_blank">Facebook</a>
+                <a href="#" target="_blank">Instagram</a>
+                <a href="#" target="_blank">LinkedIn</a> -->
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

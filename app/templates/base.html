@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio de Investimento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --accent-color: #FFC107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 5px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        h1, h2 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+        }
+
+        #exit-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        #exit-popup .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1e1e1e;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+        }
+
+        #exit-popup h2 {
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        #exit-popup .card-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        #exit-popup .card {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            width: 30%;
+        }
+
+        #exit-popup .card h3 {
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        #exit-popup .card ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #exit-popup .card li {
+            margin-bottom: 5px;
+        }
+
+        #exit-popup .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #exit-popup .btn-primary {
+            background-color: #00ffcc;
+            color: black;
+        }
+
+        #exit-popup .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        #exit-popup .icon-image,
+        #exit-popup .icon-chart,
+        #exit-popup .icon-money {
+            font-size: 24px;
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 10rem;
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
+
+                <li><a href="{{ url_for('chalenger.menu_principal') }}">Início</a></li>
+                <li><a href="{{ url_for('chalenger.convites') }}">Convites</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                
+            {% else %}
+                <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
+               
+                <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
+                <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
+               
+
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} animate__animated animate__bounceIn">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="exit-popup" class="popup">
+        <div class="popup-content">
+            <h2>O PASSO A PASSO PARA VOCÊ APRENDER A INVESTIR DO ABSOLUTO ZERO!</h2>
+            <div class="card-container">
+                <div class="card">
+                    <i class="icon-image"></i>
+                    <h3>"Gustavo, mas não sou especialista"</h3>
+                    <ul>
+                        <li>Qualquer pessoa pode investir</li>
+                        <li>Você gasta 15 minutos por mês para investir</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <i class="icon-chart"></i>
+                    <h3>"Gustavo, tenho medo de começar"</h3>
+                    <ul>
+                        <li>Você vai começar com minha ajuda</li>
+                        <li>É possível investir com segurança</li>
+                        <li>Existem seguros que te protegem</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <i class="icon-money"></i>
+                    <h3>"Gustavo, mas tenho pouco dinheiro"</h3>
+                    <ul>
+                        <li>Não precisa de muito</li>
+                        <li>Pode investir R$1,00</li>
+                        <li>Comece o quanto antes</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="https://kiwify.app/Lb3K1Xg?afid=qc0Ba91w" class="btn btn-primary">Comprar Agora</a>
+            <button id="close-popup" class="btn btn-secondary">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Animações globais
+        gsap.from("nav", {duration: 1, y: -50, opacity: 0, ease: "power3.out"});
+        gsap.from(".container > *", {duration: 1, y: 50, opacity: 0, stagger: 0.2, ease: "power3.out"});
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let popup = document.getElementById('exit-popup');
+            let closeButton = document.getElementById('close-popup');
+            let popupShown = false;
+
+            document.addEventListener('mouseleave', function(e) {
+                if (e.clientY <= 0 && !popupShown) {
+                    popup.style.display = 'block';
+                    popupShown = true;
+                }
+            });
+
+            closeButton.addEventListener('click', function() {
+                popup.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

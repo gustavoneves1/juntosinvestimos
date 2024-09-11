@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% include 'chat-template.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-5">Contribua com o projeto, faça uma doação</h1>
+    
+    <div class="donation-card">
+        <div class="donation-options">
+            <div class="donation-option pix">
+                <i class="fas fa-qrcode fa-2x"></i>
+                <div>
+                    <h3>PIX</h3>
+                    <img src="{{ url_for('static', filename='images/PIX.png') }}" alt="QR Code PIX" class="qr-code">
+                    <p>Abra o aplicativo do seu banco, escolha pix por QRCODE escaneie o nosso QRCODE e escolha o valor</p>
+                </div>
+            </div>
+            <div class="donation-option paypal">
+                <i class="fab fa-paypal fa-2x"></i>
+                <div>
+                    <h3>Muito Obrigado</h3>
+                    <p>Sua doação é importante para mantermos o projeto de pé</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .donation-card {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 30px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .donation-options {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .donation-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .donation-option:hover {
+        transform: translateY(-5px);
+    }
+
+    .donation-option i {
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .donation-option div {
+        text-align: center;
+    }
+
+    .donation-option h3 {
+        margin: 0 0 10px;
+        font-size: 1.2em;
+        color: #333;
+    }
+
+    .donation-option p {
+        margin: 10px 0 0;
+        color: #666;
+    }
+
+    .qr-code {
+        max-width: 200px;
+        margin: 15px 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .donation-option {
+        animation: fadeInUp 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .donation-option:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .donation-option:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+</style>
+{% endblock %}

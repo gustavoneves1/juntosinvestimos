@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Feedback Chat</title>
+    <style>
+        /* Estilos para o botão flutuante */
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background-color: #4CAF50;
+        }
+
+        /* Estilos para o modal de chat */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 50px;
+            width: 300px;
+            height: 450px;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1010;
+            border-radius: 10px;
+            transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        .chat-modal.show {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+            height: 450px; /* Altura padrão do modal */
+        }
+
+        .chat-modal.minimized {
+            height: 0px;
+            display: none;
+            background-color: #4CAF50;
+        }
+
+        .chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-body {
+            height: calc(100% - 150px); /* Ajustado para dar mais espaço à footer */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .chat-footer {
+            border-top: 1px solid #333;
+            padding: 15px; /* Aumentado o padding */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #2a2a2a; /* Adicionada cor de fundo para o footer */
+        }
+
+        .chat-footer select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-footer .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-footer button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-footer button:hover {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Feedback Chat Template -->
+    <button class="chat-button">💬</button>
+
+    <div class="chat-modal">
+        <div class="chat-header">
+            Feedback
+            <button id="minimizeButton">_</button>
+        </div>
+        <div class="chat-body">
+            <!-- Mensagem de boas-vindas e introdução -->
+            <div id="welcomeMessage" style="color: #bbb;">
+                Selecione se deseja relatar um bug ou sugerir uma melhoria e descreva abaixo.
+            </div>
+        </div>
+        <div class="chat-footer">
+            <select id="feedbackType">
+                <option value="" disabled selected>Selecione o tipo de feedback</option>
+                <option value="Bug">Bug</option>
+                <option value="Improvement">Melhoria</option>
+            </select>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Descreva sua melhoria ou seu BUG">
+                <button id="sendButton">📤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatButton = document.querySelector('.chat-button');
+            const chatModal = document.querySelector('.chat-modal');
+            const chatBody = document.querySelector('.chat-body');
+            const userInput = document.getElementById('userInput');
+            const feedbackType = document.getElementById('feedbackType');
+            const sendButton = document.getElementById('sendButton');
+            const minimizeButton = document.getElementById('minimizeButton');
+
+            chatButton.addEventListener('click', () => {
+                if (chatModal.classList.contains('show')) {
+                    chatModal.classList.remove('show');
+                } else {
+                    chatModal.classList.add('show');
+                    chatModal.classList.remove('minimized');
+                    displayWelcomeMessage();
+                }
+            });
+
+            minimizeButton.addEventListener('click', () => {
+                if (chatModal.classList.contains('show')) {
+                    chatModal.classList.remove('show');
+                    chatModal.classList.add('minimized');
+                } else {
+                    chatModal.classList.remove('minimized');
+                    chatModal.classList.add('show');
+                }
+            });
+
+            function displayWelcomeMessage() {
+                const welcomeMessage = document.getElementById('welcomeMessage');
+                welcomeMessage.textContent = 'Selecione se deseja relatar um bug ou sugerir uma melhoria e descreva abaixo';
+            }
+
+            function sendMessage() {
+                const message = userInput.value.trim();
+                const type = feedbackType.value;
+                const userId = 1;  // Substitua com o ID do usuário real se necessário
+
+                if (message === '' || type === '') return;
+
+                // Exibe a mensagem enviada pelo usuário
+                const userMessage = document.createElement('div');
+                userMessage.textContent = `You (${type}): ${message}`;
+                userMessage.style.color = 'white';
+                chatBody.appendChild(userMessage);
+
+                // Obtém o CSRF Token da meta tag
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                // Envia a mensagem para o servidor
+                fetch('/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ message, type, user_id: userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const feedbackResponse = document.createElement('div');
+                    feedbackResponse.textContent = 'Obrigado pelo seu feedback! Nossa equipe entrará em contato com você o mais breve possível';
+                    feedbackResponse.style.color = '#bbb';
+                    feedbackResponse.style.opacity = 0;
+                    chatBody.appendChild(feedbackResponse);
+
+                    requestAnimationFrame(() => {
+                        feedbackResponse.style.transition = 'opacity 0.5s';
+                        feedbackResponse.style.opacity = 1;
+                    });
+
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error in response:', error);
+                });
+
+                userInput.value = '';
+                feedbackType.value = '';
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+
+            userInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

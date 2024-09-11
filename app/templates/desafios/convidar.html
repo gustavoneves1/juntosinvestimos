@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% include 'chat-template.html' %}
+
+
+
+{% block content %}
+
+<h2 class="animate__animated animate__fadeInDown">Convidar usuário para {{ desafio.nome }}</h2>
+<form method="POST" class="animate__animated animate__fadeInUp">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <input type="email" name="email" placeholder="Email do usuário" required>
+    <input type="submit" value="Convidar" class="btn">
+</form>
+<a href="{{ url_for('chalenger.desafio', id=desafio.id) }}" class="btn">Voltar para o desafio</a>
+{% endblock %}

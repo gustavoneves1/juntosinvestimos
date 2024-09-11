@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% include 'chat-template.html' %}
+
+
+{% block content %}
+
+<h2 class="animate__animated animate__fadeInDown">Convites Pendentes</h2>
+{% if convites %}
+    <ul class="animate__animated animate__fadeInUp">
+    {% for convite in convites %}
+        <li>
+            Convite para o desafio: {{ convite.desafio.nome }}
+            <a href="{{ url_for('chalenger.aceitar_convite', convite_id=convite.id) }}" class="btn">Aceitar</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p class="animate__animated animate__fadeInUp">Você não tem convites pendentes.</p>
+{% endif %}
+<a href="{{ url_for('chalenger.menu_principal') }}" class="btn">Voltar para a página inicial</a>
+{% endblock %}

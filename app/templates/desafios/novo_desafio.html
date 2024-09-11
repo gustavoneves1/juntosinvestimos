@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% include 'chat-template.html' %}
+
+{% block content %}
+
+<div class="form-container">
+    <h1 class="form-title">Criar Novo Desafio</h1>
+    <form method="POST" id="novo-desafio-form">
+        <div class="form-group">
+            <input type="text" id="nome" name="nome" required class="form-input" placeholder=" ">
+            <label for="nome" class="form-label">Nome do Desafio</label>
+        </div>
+        <div class="form-group">
+            <input type="number" id="meta" name="meta" min="1" step="0.01" required class="form-input" placeholder=" ">
+            <label for="meta" class="form-label">Meta (R$)</label>
+        </div>
+        <div class="form-group">
+            <input type="number" id="depositos_totais" name="depositos_totais" min="1" required class="form-input" placeholder=" ">
+            <label for="depositos_totais" class="form-label">Número de Depósitos</label>
+        </div>
+        <div class="form-group">
+            <input type="number" id="valor_maximo_aporte" name="valor_maximo_aporte" min="1" step="0.01" required class="form-input" placeholder=" ">
+            <label for="valor_maximo_aporte" class="form-label">Valor Máximo do Aporte (R$)</label>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="submit-btn">Criar Desafio</button>
+    </form>
+</div>
+
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+        color: #333;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-bottom: 2px solid #ddd;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-bottom-color: #4CAF50;
+    }
+
+    .form-label {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: #999;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .form-input:focus ~ .form-label,
+    .form-input:not(:placeholder-shown) ~ .form-label {
+        top: -20px;
+        font-size: 12px;
+        color: #4CAF50;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #007032;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('novo-desafio-form');
+    const metaInput = document.getElementById('meta');
+    const valorMaximoAporteInput = document.getElementById('valor_maximo_aporte');
+
+    function showError(input, message) {
+        const formGroup = input.closest('.form-group');
+        let errorElement = formGroup.querySelector('.error-message');
+        
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            formGroup.appendChild(errorElement);
+        }
+        
+        errorElement.textContent = message;
+        input.classList.add('error');
+    }
+
+    function clearError(input) {
+        const formGroup = input.closest('.form-group');
+        const errorElement = formGroup.querySelector('.error-message');
+        
+        if (errorElement) {
+            errorElement.remove();
+        }
+        
+        input.classList.remove('error');
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        clearError(metaInput);
+        clearError(valorMaximoAporteInput);
+
+        const meta = parseFloat(metaInput.value);
+        const valorMaximoAporte = parseFloat(valorMaximoAporteInput.value);
+
+        let isValid = true;
+
+        if (valorMaximoAporte > meta) {
+            showError(valorMaximoAporteInput, 'O valor máximo do aporte não pode ser maior que a meta.');
+            isValid = false;
+        }
+
+        if (valorMaximoAporte < 1) {
+            showError(valorMaximoAporteInput, 'O valor máximo do aporte deve ser pelo menos 1 real.');
+            isValid = false;
+        }
+
+        if (isValid) {
+            form.submit();
+        }
+    });
+});
+</script>
+{% endblock %}
