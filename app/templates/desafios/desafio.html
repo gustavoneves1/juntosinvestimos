@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<div class="floating-info-container">
+    <p id="valor-total-container">
+        Valor total selecionado: R$ <span id="valor-total-selecionado">0,00</span>
+    </p>
+</div>
+
 <div class="desafio-header animate__animated animate__fadeInDown">
     <h1>{{ desafio.nome }}</h1>
     <div class="desafio-info">
@@ -17,10 +23,6 @@
     </div>
 </div>
 
-<p class="animate__animated animate__fadeInUp" id="valor-total-container">
-    Valor total selecionado: <span id="valor-total-selecionado">0,00</span>
-</p>
-
 <h2 class="animate__animated animate__fadeInUp">Tabela de Depósitos</h2>
 <div id="tabela-container" class="animate__animated animate__fadeInUp">
     <form id="deposito-form" action="{{ url_for('chalenger.registrar_deposito', desafio_id=desafio.id) }}" method="POST">
@@ -32,7 +34,7 @@
                      data-numero="{{ deposito_num }}" 
                      data-valor="{{ valor_deposito }}">
                     <span class="deposito-numero">#{{ deposito_num }}</span>
-                    <span class="deposito-valor"> {{ "%.2f"|format(valor_deposito) }}</span>
+                    <span class="deposito-valor">R$ {{ "%.2f"|format(valor_deposito) }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -41,7 +43,10 @@
 
 <!-- Botão flutuante -->
 <div class="floating-button-container">
-    <button type="submit" form="deposito-form" class="btn btn-primary floating-button">Registrar Depósitos</button>
+    <button type="submit" form="deposito-form" class="btn btn-primary floating-button">
+        <span class="button-text">Registrar Depósitos</span>
+        <span class="valor-total-mobile">R$ <span id="valor-total-selecionado-mobile">0,00</span></span>
+    </button>
 </div>
 
 <div class="action-buttons">
@@ -84,13 +89,10 @@
     }
 
     #valor-total-container {
-        font-size: 1.2em;
+        margin: 0;
+        font-size: 1.1em;
         font-weight: bold;
         color: var(--primary-color);
-        background-color: #E8F5E9;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
         text-align: center;
     }
 
@@ -153,39 +155,66 @@
         }
     }
 
+    .floating-info-container {
+        position: sticky;
+        top: 60px;
+        z-index: 999;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
     .floating-button-container {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        background-color: white;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         z-index: 1000;
     }
 
     .floating-button {
-        padding: 15px 30px;
-        font-size: 18px;
-        border-radius: 30px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
     }
 
-    .floating-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    .valor-total-mobile {
+        display: none;
+        font-size: 14px;
+        font-weight: bold;
     }
 
     @media (max-width: 768px) {
-        .floating-button-container {
-            width: 100%;
-            right: 0;
-            bottom: 0;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.9);
+        .button-text {
+            flex: 1;
+            text-align: center;
         }
 
-        .floating-button {
-            width: 100%;
-            border-radius: 5px;
+        .valor-total-mobile {
+            display: inline-block;
         }
+
+        .floating-info-container {
+            display: none;
+        }
+
+        .container {
+            padding-bottom: 70px; /* Espaço para o botão fixo */
+        }
+    }
+
+    .container {
+        padding-top: 80px; /* Ajuste este valor conforme necessário */
     }
 </style>
 
@@ -196,14 +225,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const depositoForm = document.getElementById('deposito-form');
     const depositosGrid = document.querySelector('.depositos-grid');
     const valorTotalSpan = document.getElementById('valor-total-selecionado');
+    const valorTotalMobileSpan = document.getElementById('valor-total-selecionado-mobile');
     let depositosSelecionados = {};
+
+    console.log('Elementos inicializados:', {
+        depositoForm: !!depositoForm,
+        depositosGrid: !!depositosGrid,
+        valorTotalSpan: !!valorTotalSpan,
+        valorTotalMobileSpan: !!valorTotalMobileSpan
+    });
+
+    if (!depositosGrid) {
+        console.error('Elemento .depositos-grid não encontrado');
+        return;
+    }
 
     depositosGrid.addEventListener('click', function(e) {
         const depositoCard = e.target.closest('.deposito-card');
+        console.log('Clique detectado:', e.target, 'Cartão:', depositoCard);
+
         if (depositoCard && !depositoCard.classList.contains('feito')) {
             depositoCard.classList.toggle('selecionado');
             const numero = depositoCard.dataset.numero;
             const valor = parseFloat(depositoCard.dataset.valor);
+
+            console.log('Dados do cartão:', { numero, valor });
 
             if (depositoCard.classList.contains('selecionado')) {
                 depositosSelecionados[numero] = valor;
@@ -211,13 +257,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 delete depositosSelecionados[numero];
             }
 
+            console.log('Depósitos selecionados:', depositosSelecionados);
             atualizarValorTotal();
         }
     });
 
     function atualizarValorTotal() {
         const valorTotal = Object.values(depositosSelecionados).reduce((a, b) => a + b, 0);
-        valorTotalSpan.textContent = valorTotal.toFixed(2);
+        const valorFormatado = valorTotal.toFixed(2);
+        
+        const valorTotalSpan = document.getElementById('valor-total-selecionado');
+        const valorTotalMobileSpan = document.getElementById('valor-total-selecionado-mobile');
+        
+        if (valorTotalSpan) valorTotalSpan.textContent = valorFormatado;
+        if (valorTotalMobileSpan) valorTotalMobileSpan.textContent = valorFormatado;
+        
+        console.log('Valor total atualizado:', valorFormatado);
     }
 
     depositoForm.addEventListener('submit', function(e) {
@@ -232,6 +287,8 @@ document.addEventListener('DOMContentLoaded', function() {
             depositos: Object.keys(depositosSelecionados),
             csrf_token: document.querySelector('input[name="csrf_token"]').value
         };
+        
+        console.log('Dados para enviar:', dadosParaEnviar);
         
         fetch(this.action, {
             method: 'POST',

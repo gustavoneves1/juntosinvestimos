@@ -206,27 +206,76 @@
             background-color: #007bff;
             color: #fff;
         }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger-menu span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 2px 0;
+            transition: 0.4s;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                display: flex;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: var(--primary-color);
+                padding: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu li {
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
     <nav>
-        <ul>
-            {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
-
-                <li><a href="{{ url_for('chalenger.menu_principal') }}">Início</a></li>
-                <li><a href="{{ url_for('chalenger.convites') }}">Convites</a></li>
-                <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
-                
-            {% else %}
-                <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
-               
-                <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
-                <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
-               
-
-            {% endif %}
-        </ul>
+        <div class="nav-container">
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
+                    <li><a href="{{ url_for('chalenger.menu_principal') }}">Início</a></li>
+                    <li><a href="{{ url_for('chalenger.convites') }}">Convites</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('landingpage.contribua') }}">Contribua com o projeto 😁</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
 
     <div class="container">
@@ -298,6 +347,38 @@
                 popup.style.display = 'none';
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger-menu');
+    const navMenu = document.querySelector('.nav-menu');
+
+    hamburger.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    });
+
+    // Fechar o menu ao clicar fora dele
+    document.addEventListener('click', function(event) {
+        const isClickInsideMenu = navMenu.contains(event.target);
+        const isClickOnHamburger = hamburger.contains(event.target);
+
+        if (!isClickInsideMenu && !isClickOnHamburger && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    });
+
+    // Fechar o menu ao rolar a tela
+    window.addEventListener('scroll', function() {
+        if (navMenu.classList.contains('active')) {
+            gsap.to('.nav-menu', {duration: 0.5, opacity: 0, onComplete: () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+                gsap.to('.nav-menu', {duration: 0, opacity: 1}); // Reset opacity after hiding
+            }});
+        }
+    });
+});
     </script>
 </body>
 </html>
