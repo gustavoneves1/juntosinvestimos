@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
+    <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9N058QG6Y0"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9N058QG6Y0');
+    </script>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desafio de Investimento</title>
@@ -253,6 +265,41 @@
                 margin: 10px 0;
             }
         }
+
+        @media (max-width: 768px) {
+            #exit-popup .popup-content {
+                padding: 15px;
+                width: 95%;
+            }
+
+            #exit-popup h2 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+
+            #exit-popup .card-container {
+                flex-direction: column;
+            }
+
+            #exit-popup .card {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            #exit-popup .card h3 {
+                font-size: 1.2rem;
+            }
+
+            #exit-popup .card ul {
+                font-size: 0.9rem;
+            }
+
+            #exit-popup .btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -292,32 +339,31 @@
 
     <div id="exit-popup" class="popup">
         <div class="popup-content">
-            <h2>O PASSO A PASSO PARA VOCÊ APRENDER A INVESTIR DO ABSOLUTO ZERO!</h2>
+            <h2>APRENDA A INVESTIR DO ZERO!</h2>
             <div class="card-container">
                 <div class="card">
                     <i class="icon-image"></i>
-                    <h3>"Gustavo, mas não sou especialista"</h3>
+                    <h3>"Não sou especialista"</h3>
                     <ul>
-                        <li>Qualquer pessoa pode investir</li>
-                        <li>Você gasta 15 minutos por mês para investir</li>
+                        <li>Qualquer um pode investir</li>
+                        <li>15 min/mês é suficiente</li>
                     </ul>
                 </div>
                 <div class="card">
                     <i class="icon-chart"></i>
-                    <h3>"Gustavo, tenho medo de começar"</h3>
+                    <h3>"Tenho medo de começar"</h3>
                     <ul>
-                        <li>Você vai começar com minha ajuda</li>
-                        <li>É possível investir com segurança</li>
-                        <li>Existem seguros que te protegem</li>
+                        <li>Comece com nossa ajuda</li>
+                        <li>Investimento seguro</li>
+                        <li>Seguros disponíveis</li>
                     </ul>
                 </div>
                 <div class="card">
                     <i class="icon-money"></i>
-                    <h3>"Gustavo, mas tenho pouco dinheiro"</h3>
+                    <h3>"Tenho pouco dinheiro"</h3>
                     <ul>
-                        <li>Não precisa de muito</li>
-                        <li>Pode investir R$1,00</li>
-                        <li>Comece o quanto antes</li>
+                        <li>Comece com R$1,00</li>
+                        <li>Inicie o quanto antes</li>
                     </ul>
                 </div>
             </div>
@@ -379,6 +425,24 @@
         }
     });
 });
+
+    let interactionCount = 0;
+    const interactionThreshold = 5;
+    let popupShown = false;
+
+    function countInteraction() {
+        if (window.innerWidth <= 768 && !popupShown) {
+            interactionCount++;
+            console.log('Interação:', interactionCount); // Para depuração
+            if (interactionCount >= interactionThreshold) {
+                document.getElementById('exit-popup').style.display = 'block';
+                popupShown = true;
+            }
+        }
+    }
+
+    document.addEventListener('click', countInteraction);
+    document.addEventListener('touchstart', countInteraction);
     </script>
 </body>
 </html>
