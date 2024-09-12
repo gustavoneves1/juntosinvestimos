@@ -8,7 +8,7 @@
     <div class="desafio-info">
         <p>Meta: {{ desafio.meta|format_currency }}</p>
         <p>Depósitos Feitos: {{ desafio.get_depositos_feitos()|length }} / {{ desafio.depositos_totais }}</p>
-        <p>Valor Investido: R$ <span id="valor-investido">{{ desafio.valor_investido|format_currency }}</span></p>
+        <p>Valor Investido:  <span id="valor-investido">{{ desafio.valor_investido|format_currency }}</span></p>
         <p>Valor Máximo do Aporte: {{ desafio.valor_maximo_aporte|format_currency }}</p>
     </div>
     <div class="progress-bar">
@@ -18,7 +18,7 @@
 </div>
 
 <p class="animate__animated animate__fadeInUp" id="valor-total-container">
-    Valor total selecionado: R$ <span id="valor-total-selecionado">0,00</span>
+    Valor total selecionado: <span id="valor-total-selecionado">0,00</span>
 </p>
 
 <h2 class="animate__animated animate__fadeInUp">Tabela de Depósitos</h2>
@@ -32,7 +32,7 @@
                      data-numero="{{ deposito_num }}" 
                      data-valor="{{ valor_deposito }}">
                     <span class="deposito-numero">#{{ deposito_num }}</span>
-                    <span class="deposito-valor">R$ {{ "%.2f"|format(valor_deposito) }}</span>
+                    <span class="deposito-valor"> {{ "%.2f"|format(valor_deposito) }}</span>
                 </div>
             {% endfor %}
         </div>

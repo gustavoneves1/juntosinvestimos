@@ -10,7 +10,7 @@
     {% for desafio in current_user.desafios %}
     <div class="card desafio-card animate__animated animate__fadeInUp">
         <h3>{{ desafio.nome }}</h3>
-        <p>Meta: R$ {{ desafio.meta|format_currency }}</p>
+        <p>Meta:  {{ desafio.meta|format_currency }}</p>
         <p>Progresso: {{ (desafio.valor_investido / desafio.meta * 100)|int }}%</p>
 
         <div class="progress-bar">
@@ -30,7 +30,7 @@
     {% for convite in current_user.convites_recebidos if convite.aceito %}
     <div class="card desafio-card animate__animated animate__fadeInUp">
         <h3>{{ convite.desafio.nome }}</h3>
-        <p>Meta: R$ {{ convite.desafio.meta|format_currency }}</p>
+        <p>Meta:  {{ convite.desafio.meta|format_currency }}</p>
         <p>Valor Investido: {{ convite.desafio.valor_investido|format_currency }}</p>
 
         <p>Progresso: {{ (convite.desafio.valor_investido / convite.desafio.meta * 100)|int }}%</p>
