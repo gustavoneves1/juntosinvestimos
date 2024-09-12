@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% include 'chat-template.html' %}
+
 
 {% block content %}
 
@@ -36,8 +36,12 @@
                 </div>
             {% endfor %}
         </div>
-        <button type="submit" class="btn btn-primary">Registrar Depósitos</button>
     </form>
+</div>
+
+<!-- Botão flutuante -->
+<div class="floating-button-container">
+    <button type="submit" form="deposito-form" class="btn btn-primary floating-button">Registrar Depósitos</button>
 </div>
 
 <div class="action-buttons">
@@ -146,6 +150,41 @@
 
         .action-buttons .btn {
             margin-bottom: 10px;
+        }
+    }
+
+    .floating-button-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .floating-button {
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .floating-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+        .floating-button-container {
+            width: 100%;
+            right: 0;
+            bottom: 0;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .floating-button {
+            width: 100%;
+            border-radius: 5px;
         }
     }
 </style>
