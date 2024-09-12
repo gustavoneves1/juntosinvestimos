@@ -5,7 +5,7 @@ from app.models import User
 from app.ext.database import db
 from . import auth_bp
 import datetime
-from app.utils import send_reset_email
+from app.utils import send_reset_email, send_email
 from werkzeug.security import generate_password_hash
 import logging
 
@@ -22,13 +22,18 @@ def register():
             flash('Nome de usuário ou email já existe.')
             return redirect(url_for('auth.register'))
         
-        new_user = User(username=username, email=email, telefone_numero=phone_number)
+        new_user = User(username=username, email=email, telefone_numero=phone_number, is_active=True)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         
-        print(f"Novo usuário registrado: {username}, {email}")  
-        flash('Registro realizado com sucesso!')
+        token = new_user.generate_confirmation_token()
+        confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+        html = render_template('auth/activate.html', confirm_url=confirm_url)
+        subject = "Por favor, confirme seu email"
+        send_email(new_user.email, subject, html)
+
+        flash('Um link de confirmação foi enviado para o seu email.')
         return redirect(url_for('auth.login'))
     
     return render_template('auth/register.html')
@@ -39,10 +44,24 @@ def login():
         login = request.form['login']
         password = request.form['password']
         user = User.query.filter((func.lower(User.email) == func.lower(login))).first()
-        if user and user.check_password(password):
-            login_user(user)
-            flash('Login realizado com sucesso!')
-            return redirect(url_for('chalenger.menu_principal'))
+        logging.info(f"Tentativa de login para: {login}")
+        if user:
+            logging.info(f"Usuário encontrado: {user.id}")
+            if user.check_password(password):
+                logging.info("Senha correta")
+                if user.is_confirmed:
+                    login_user(user)
+                    logging.info(f"Login bem-sucedido para o usuário: {user.id}")
+                    flash('Login realizado com sucesso!')
+                    
+                    return redirect(url_for('chalenger.menu_principal'))
+                else:
+                    logging.info(f"Usuário não confirmado: {user.id}")
+                    flash('Por favor, confirme seu email antes de fazer login.')
+            else:
+                logging.info(f"Senha incorreta para o usuário: {user.id}")
+        else:
+            logging.info(f"Usuário não encontrado para: {login}")
         flash('Email/nome de usuário ou senha inválidos.')
     return render_template('auth/login.html')
 
@@ -105,3 +124,17 @@ def reset_password(token):
             return redirect(url_for('auth.reset_password', token=token))
     
     return render_template('auth/reset_password.html')
+
+@auth_bp.route('/confirm/<token>')
+def confirm_email(token):
+    user = User.verify_confirmation_token(token)
+    if user:
+        if user.is_confirmed:
+            flash('Conta já confirmada. Por favor, faça login.', 'success')
+        else:
+            user.confirm_email()
+            db.session.commit()
+            flash('Você confirmou sua conta. Obrigado!', 'success')
+    else:
+        flash('O link de confirmação é inválido ou expirou.', 'danger')
+    return redirect(url_for('auth.login'))

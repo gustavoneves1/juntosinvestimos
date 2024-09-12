@@ -13,7 +13,12 @@ from app.utils import format_currency
 import logging
 csrf = CSRFProtect()
 
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 def create_app():
     app = Flask(__name__)
@@ -28,14 +33,7 @@ def create_app():
     
     init_database(app)
     
-    login_manager = LoginManager(app)
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        user = User.query.get(int(user_id))
-        if user and user.is_active:
-            return user
-        return None
+    login_manager.init_app(app)
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(chalenger_bp, url_prefix='/desafio')
