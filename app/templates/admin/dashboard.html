@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Painel Administrativo</h1>
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <h2>Total de Usuários</h2>
+        <p>{{ total_users }}</p>
+    </div>
+    <div class="stat-card">
+        <h2>Total de Desafios</h2>
+        <p>{{ total_desafios }}</p>
+    </div>
+    <div class="stat-card">
+        <h2>Total de Convites</h2>
+        <p>{{ total_convites }}</p>
+    </div>
+</div>
+<nav>
+    <ul>
+        <li><a href="{{ url_for('admin.list_users') }}">Gerenciar Usuários</a></li>
+        <li><a href="{{ url_for('admin.list_desafios') }}">Gerenciar Desafios</a></li>
+        <li><a href="{{ url_for('admin.reports') }}">Relatórios</a></li>
+    </ul>
+</nav>
+{% endblock %}

@@ -5,35 +5,14 @@ from app.ext.config import init_configuration
 from app.blueprints.auth import auth_bp
 from app.blueprints.landpage import landingpage_bp
 from app.blueprints.desafios import chalenger_bp
+from app.blueprints.admin import admin_bp
 from app.ext.database import init_database, db
 from app.ext.email import email
 from app.models import User, Convite
-
+from app.utils import format_currency
+import logging
 csrf = CSRFProtect()
 
-def format_currency(value, decimal_places=2, grouping=True):
-    """
-    Formata um valor como moeda com ou sem agrupamento de milhares no padrão brasileiro.
-    
-    :param value: O valor numérico a ser formatado.
-    :param decimal_places: O número de casas decimais a ser exibido.
-    :param grouping: Se True, usa agrupamento de milhares.
-    :return: O valor formatado como string.
-    """
-    if grouping:
-        # Formatação com agrupamento de milhares
-        parts = f"{value:.{decimal_places}f}".split(".")
-        integer_part = parts[0]
-        decimal_part = parts[1]
-        
-        # Agrupamento de milhares
-        integer_part = integer_part[::-1]
-        grouped_integer = '.'.join([integer_part[i:i+3] for i in range(0, len(integer_part), 3)])[::-1]
-        
-        return f"R${grouped_integer},{decimal_part}"
-    else:
-        # Sem agrupamento de milhares
-        return f"R${value:.{decimal_places}f}"
 
 
 def create_app():
@@ -52,17 +31,15 @@ def create_app():
     login_manager = LoginManager(app)
 
     @login_manager.user_loader
-    def get_user(user_id):
-        print(f"Buscando usuário com ID: {user_id}")
-        user = User.query.filter_by(id=user_id).first()
-        if user:
-            print(f"Usuário encontrado: {user.email}")
-        else:
-            print("Usuário não encontrado")
-        return user
+    def load_user(user_id):
+        user = User.query.get(int(user_id))
+        if user and user.is_active:
+            return user
+        return None
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(chalenger_bp, url_prefix='/desafio')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(landingpage_bp, url_prefix='/')
     
     @app.context_processor
@@ -75,5 +52,8 @@ def create_app():
     @app.template_filter('format_currency')
     def format_currency_filter(value):
         return format_currency(value)
+
+    # Configuração de logging
+    logging.basicConfig(level=logging.INFO)
 
     return app

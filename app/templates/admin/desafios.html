@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Gerenciar Desafios</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Meta</th>
+            <th>Data Início</th>
+            <th>Data Fim</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for desafio in desafios %}
+        <tr>
+            <td>{{ desafio.id }}</td>
+            <td>{{ desafio.nome }}</td>
+            <td>{{ desafio.meta }}</td>
+            <td>{{ desafio.data_inicio }}</td>
+            <td>{{ desafio.data_fim }}</td>
+            <td>
+                <a href="{{ url_for('admin.edit_desafio', desafio_id=desafio.id) }}">Editar</a>
+                <form action="{{ url_for('admin.delete_desafio', desafio_id=desafio.id) }}" method="POST" style="display:inline;">
+                    <input type="submit" value="Excluir" onclick="return confirm('Tem certeza que deseja excluir este desafio?');">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

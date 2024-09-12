@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Relatórios</h1>
+<div class="report-stats">
+    <div class="stat-card">
+        <h2>Usuários Ativos</h2>
+        <p>{{ active_users }}</p>
+    </div>
+    <div class="stat-card">
+        <h2>Total Investido</h2>
+        <p>R$ {{ total_investido|round(2) }}</p>
+    </div>
+    <div class="stat-card">
+        <h2>Desafios Concluídos</h2>
+        <p>{{ desafios_concluidos }}</p>
+    </div>
+</div>
+{% endblock %}

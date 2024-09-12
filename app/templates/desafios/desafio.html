@@ -32,7 +32,7 @@
 
             {% for i in range(0, desafio.depositos_totais, 10) %}
             <tr>
-                {% for j in range(1, 13) %}
+                {% for j in range(1, 15) %}
                 {% set deposito_num = i + j %}
                 {% if deposito_num <= desafio.depositos_totais %}
                 {% set valor_deposito = desafio.get_valores_depositos()[deposito_num - 1] %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Gerenciar Usuários</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Ativo</th>
+            <th>Admin</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ 'Sim' if user.is_active else 'Não' }}</td>
+            <td>{{ 'Sim' if user.is_admin else 'Não' }}</td>
+            <td>
+                <a href="{{ url_for('admin.edit_user', user_id=user.id) }}">Editar</a>
+                <button onclick="deleteUser({{ user.id }})">Excluir</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function deleteUser(userId) {
+    if (confirm('Tem certeza que deseja excluir este usuário?')) {
+        fetch(`/admin/users/${userId}/delete`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert('Erro ao excluir usuário');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao excluir usuário');
+        });
+    }
+}
+</script>
+{% endblock %}
