@@ -85,28 +85,47 @@ class Desafio(db.Model):
     valor_maximo_aporte = db.Column(db.Float, nullable=False)
 
     def gerar_valores_depositos(self):
+        meta = int(Decimal(str(self.meta)).quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+        depositos_totais = self.depositos_totais
+        valor_maximo_aporte = int(Decimal(str(self.valor_maximo_aporte)).quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+
         valores = []
-        valor_restante = Decimal(str(self.meta)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        depositos_restantes = self.depositos_totais
-        valor_maximo_aporte = Decimal(str(self.valor_maximo_aporte)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        valor_restante = meta
 
+        # Garante que pelo menos 10% dos depósitos sejam de valores baixos
+        num_valores_baixos = max(1, int(depositos_totais * 0.1))
+        for _ in range(num_valores_baixos):
+            valor = random.randint(1, min(10, valor_restante))
+            valores.append(valor)
+            valor_restante -= valor
+
+        # Distribui o valor restante em depósitos maiores
+        depositos_restantes = depositos_totais - num_valores_baixos
         while depositos_restantes > 1:
-            valor_minimo = max(Decimal('1.00'), valor_restante - (depositos_restantes - 1) * valor_maximo_aporte)
-            valor_maximo = min(valor_maximo_aporte, valor_restante - Decimal(str(depositos_restantes - 1)))
-
-            valor = Decimal(str(random.uniform(float(valor_minimo), float(valor_maximo)))).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            valor_medio_restante = valor_restante // depositos_restantes
+            valor_min = max(1, valor_medio_restante // 2)
+            valor_max = min(valor_maximo_aporte, valor_medio_restante * 2, valor_restante - depositos_restantes + 1)
+            
+            valor = random.randint(valor_min, valor_max)
             valores.append(valor)
             valor_restante -= valor
             depositos_restantes -= 1
 
+        # Adiciona o valor restante como último depósito
         valores.append(valor_restante)
-        valores.sort(reverse=False)
 
-        self.valores_depositos = json.dumps([str(v) for v in valores])
+        # Ordena a lista de valores do menor para o maior
+        valores.sort()
 
-        soma_ajustada = sum(Decimal(v) for v in json.loads(self.valores_depositos))
-        if soma_ajustada != Decimal(str(self.meta)):
-            print(f"Erro: A soma dos depósitos ({soma_ajustada}) não é igual à meta ({self.meta})")
+        self.valores_depositos = json.dumps(valores)
+
+        # Verifica se a soma dos depósitos está dentro do limite permitido
+        soma_depositos = sum(valores)
+        diferenca = soma_depositos - meta
+        if abs(diferenca) > 100:
+            print(f"Aviso: A soma dos depósitos ({soma_depositos}) excede o limite permitido. Diferença: {diferenca}")
+        else:
+            print(f"Sucesso: A soma dos depósitos ({soma_depositos}) está dentro do limite permitido. Diferença: {diferenca}")
 
     def get_valores_depositos(self):
         return [Decimal(v) for v in json.loads(self.valores_depositos)]

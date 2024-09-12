@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% include 'chat-template.html' %}
 
-
 {% block content %}
 
 <div class="desafio-header animate__animated animate__fadeInDown">
@@ -10,15 +9,13 @@
         <p>Meta: {{ desafio.meta|format_currency }}</p>
         <p>Depósitos Feitos: {{ desafio.get_depositos_feitos()|length }} / {{ desafio.depositos_totais }}</p>
         <p>Valor Investido: R$ <span id="valor-investido">{{ desafio.valor_investido|format_currency }}</span></p>
-        <p>Valor Máximo do Aporte:  {{ desafio.valor_maximo_aporte|format_currency }}</p>
+        <p>Valor Máximo do Aporte: {{ desafio.valor_maximo_aporte|format_currency }}</p>
     </div>
-    <!-- Ajustar aqui -->
     <div class="progress-bar">
         {% set progresso = (desafio.valor_investido / desafio.meta * 100) %}
         <div class="progress" style="width: {{ 100 if progresso > 99 else progresso|round(2) }}%;"></div>
     </div>
-
-
+</div>
 
 <p class="animate__animated animate__fadeInUp" id="valor-total-container">
     Valor total selecionado: R$ <span id="valor-total-selecionado">0,00</span>
@@ -28,32 +25,23 @@
 <div id="tabela-container" class="animate__animated animate__fadeInUp">
     <form id="deposito-form" action="{{ url_for('chalenger.registrar_deposito', desafio_id=desafio.id) }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <table class="table table-bordered">
-
-            {% for i in range(0, desafio.depositos_totais, 10) %}
-            <tr>
-                {% for j in range(1, 15) %}
-                {% set deposito_num = i + j %}
-                {% if deposito_num <= desafio.depositos_totais %}
+        <div class="depositos-grid">
+            {% for deposito_num in range(1, desafio.depositos_totais + 1) %}
                 {% set valor_deposito = desafio.get_valores_depositos()[deposito_num - 1] %}
-                <td class="deposito {% if deposito_num in desafio.get_depositos_feitos() %}feito{% endif %}" 
-                    data-numero="{{ deposito_num }}" 
-                    data-valor="{{ valor_deposito }}">
-                    R$ {{ "%.2f"|format(valor_deposito) }}
-                </td>
-                {% endif %}
-                {% endfor %}
-            </tr>
+                <div class="deposito-card {% if deposito_num in desafio.get_depositos_feitos() %}feito{% endif %}"
+                     data-numero="{{ deposito_num }}" 
+                     data-valor="{{ valor_deposito }}">
+                    <span class="deposito-numero">#{{ deposito_num }}</span>
+                    <span class="deposito-valor">R$ {{ "%.2f"|format(valor_deposito) }}</span>
+                </div>
             {% endfor %}
-        </table>
-
+        </div>
         <button type="submit" class="btn btn-primary">Registrar Depósitos</button>
     </form>
 </div>
 
 <div class="action-buttons">
     <a href="{{ url_for('chalenger.menu_principal') }}" class="btn animate__animated animate__fadeInUp">Voltar para a lista de desafios</a>
-
     {% if desafio.owner == current_user %}
     <a href="{{ url_for('chalenger.convidar', desafio_id=desafio.id) }}" class="btn animate__animated animate__fadeInUp">Convidar usuário</a>
     {% endif %}
@@ -76,21 +64,20 @@
     }
 
     .progress-bar {
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    height: 10px;
-    margin: 10px 0;
-        width: 100%; /* Garanta que a barra ocupe toda a largura disponível */
-        overflow: hidden; /* Evita que o conteúdo da barra saia dos limites */
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        height: 10px;
+        margin: 10px 0;
+        width: 100%;
+        overflow: hidden;
     }
 
     .progress {
         background-color: var(--primary-color);
-        height: 100%; /* Certifique-se de que a altura esteja correta */
+        height: 100%;
         border-radius: 5px;
         transition: width 0.5s ease-in-out;
     }
-
 
     #valor-total-container {
         font-size: 1.2em;
@@ -103,38 +90,43 @@
         text-align: center;
     }
 
-    #tabela-container {
-        overflow-x: auto;
+    .depositos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
         margin-bottom: 20px;
     }
 
-    #depositos {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .deposito {
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        border: 1px solid #ddd;
+    .deposito-card {
+        background-color: #f5f5f5;
+        border-radius: 5px;
         padding: 10px;
         text-align: center;
         transition: all 0.3s ease;
+        cursor: pointer;
     }
 
-    .deposito:hover {
-        background-color: #f5f5f5;
-    }
-
-    .deposito.selecionado {
+    .deposito-card.selecionado {
         background-color: var(--primary-color);
         color: white;
     }
 
-    .deposito.feito {
+    .deposito-card.feito {
         background-color: #E8F5E9;
         color: var(--secondary-color);
         cursor: not-allowed;
+    }
+
+    .deposito-numero {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .deposito-valor {
+        font-size: 1.1em;
+        font-weight: bold;
+        display: block;
+        margin-top: 5px;
     }
 
     .action-buttons {
@@ -163,17 +155,18 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const depositoForm = document.getElementById('deposito-form');
-    const tabelaContainer = document.getElementById('tabela-container');
+    const depositosGrid = document.querySelector('.depositos-grid');
     const valorTotalSpan = document.getElementById('valor-total-selecionado');
     let depositosSelecionados = {};
 
-    tabelaContainer.addEventListener('click', function(e) {
-        if (e.target.classList.contains('deposito') && !e.target.classList.contains('feito')) {
-            e.target.classList.toggle('selecionado');
-            const numero = e.target.dataset.numero;
-            const valor = parseFloat(e.target.dataset.valor);
+    depositosGrid.addEventListener('click', function(e) {
+        const depositoCard = e.target.closest('.deposito-card');
+        if (depositoCard && !depositoCard.classList.contains('feito')) {
+            depositoCard.classList.toggle('selecionado');
+            const numero = depositoCard.dataset.numero;
+            const valor = parseFloat(depositoCard.dataset.valor);
 
-            if (e.target.classList.contains('selecionado')) {
+            if (depositoCard.classList.contains('selecionado')) {
                 depositosSelecionados[numero] = valor;
             } else {
                 delete depositosSelecionados[numero];
