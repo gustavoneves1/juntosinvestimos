@@ -5,6 +5,8 @@ from app.ext.config import init_configuration
 from app.blueprints.auth import auth_bp
 from app.blueprints.landpage import landingpage_bp
 from app.blueprints.desafios import chalenger_bp
+from app.blueprints.financeiro import financeiro_bp
+
 from app.blueprints.admin import admin_bp
 from app.ext.database import init_database, db
 from app.ext.email import email
@@ -38,7 +40,10 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(chalenger_bp, url_prefix='/desafio')
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(financeiro_bp, url_prefix='/financeiro')
     app.register_blueprint(landingpage_bp, url_prefix='/')
+
+
     
     @app.context_processor
     def inject_convites_pendentes():

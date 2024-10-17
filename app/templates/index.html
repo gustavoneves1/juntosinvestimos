@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,12 +7,13 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-9N058QG6Y0');
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>Landing Page - Juntos Investimos</title>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
@@ -43,7 +43,7 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            padding: 0px 0; /* Reduzido o padding */
+            padding: 0;
         }
 
         nav {
@@ -54,7 +54,7 @@
         }
 
         .logo {
-            width: 190px; /* Reduzido o tamanho do logo */
+            width: 190px;
             height: auto;
             margin-right: 20px;
         }
@@ -62,12 +62,11 @@
         nav ul {
             display: flex;
             list-style: none;
-            margin-left: auto;
-            margin: 0; /* Removido a margem */
+            margin: 0;
         }
 
         nav ul li {
-            margin-left: 20px; /* Reduzido o espaço entre os itens do menu */
+            margin-left: 20px;
         }
 
         nav ul li a {
@@ -75,7 +74,7 @@
             color: #333;
             font-weight: 500;
             transition: color 0.3s ease;
-            font-size: 0.9rem; /* Reduzido o tamanho da fonte */
+            font-size: 0.9rem;
         }
 
         nav ul li a:hover {
@@ -203,7 +202,7 @@
         }
 
         button:hover {
-            background-color: #4CAF50;
+            background-color: #45a049;
         }
 
         footer {
@@ -249,14 +248,14 @@
             }
 
             .logo {
-                width: 120px; /* Tamanho reduzido para telas menores */
+                width: 120px;
             }
 
             nav {
-                flex-direction: row; /* Mantém o layout horizontal em telas menores */
+                flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 15px; /* Adicionado padding horizontal */
+                padding: 0 15px;
             }
 
             nav ul {
@@ -265,11 +264,10 @@
 
             nav ul li {
                 margin-left: 10px;
-                margin-right: 0;
             }
 
             nav ul li a {
-                font-size: 0.8rem; /* Reduzido ainda mais o tamanho da fonte para telas menores */
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -285,7 +283,6 @@
                     <li><a href="#beneficios">Benefícios</a></li>
                     <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
                     <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-
                 </ul>
             </nav>
         </div>
@@ -312,12 +309,12 @@
                     <div class="beneficio">
                         <i class=""></i>
                         <h3>Convite Fácil</h3>
-                        <p>Descrição do benefício 2</p>
+                        <p>Convide facilmente pessoas para participar dos seus desafios</p>
                     </div>
                     <div class="beneficio">
                         <i class=""></i>
                         <h3>Somos Gratuito 🫡</h3>
-                        <p>Descrição do benefício 3</p>
+                        <p>Crie quantos desafios quiser</p>
                     </div>
                 </div>
             </div>
@@ -325,13 +322,13 @@
 
         <section id="depoimentos">
             <div class="container">
-                <h2>O que as pessoas estão falando sobre?</h2>
+                                <h2>O que as pessoas estão falando?</h2>
                 <div class="depoimento">
-                    <p>"Consegui controlar o quanto eu meu namorado estavamos juntando"</p>
+                    <p>"Consegui controlar o quanto eu e meu namorado estávamos juntando."</p>
                     <cite>- Maria Silva</cite>
                 </div>
                 <div class="depoimento">
-                    <p>"Muito fácil chamar um amigo pra fazer parte dos desafios"</p>
+                    <p>"Muito fácil chamar um amigo pra fazer parte dos desafios."</p>
                     <cite>- Igor Santos</cite>
                 </div>
             </div>
@@ -354,7 +351,8 @@
         <div class="container">
             <p>&copy; 2024 InnevoResearch. Todos os direitos reservados.</p>
             <div class="social-links">
-                <!-- <a href="#" target="_blank">Facebook</a>
+                <!-- Exemplos de links para redes sociais
+                <a href="#" target="_blank">Facebook</a>
                 <a href="#" target="_blank">Instagram</a>
                 <a href="#" target="_blank">LinkedIn</a> -->
             </div>
@@ -362,3 +360,4 @@
     </footer>
 </body>
 </html>
+

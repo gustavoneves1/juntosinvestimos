@@ -4,6 +4,9 @@ from flask_mail import Message
 from app.ext.email import mail
 import logging
 from functools import wraps
+import requests
+import datetime
+
 
 def format_currency(value, decimal_places=2, grouping=True):
     """
@@ -69,3 +72,78 @@ def send_email(to, subject, template):
         sender=current_app.config['MAIL_DEFAULT_SENDER']
     )
     mail.send(msg)
+
+
+
+TOKEN = "rHGCchsbc3VfwWCebonK7B"
+
+def get_real_ibov_data():
+    url = "https://brapi.dev/api/quote/^BVSP"
+    params = {
+        'range': '1d',
+        'interval': '1m',
+        'fundamental': 'true',
+        'dividends': 'true',
+        'modules': 'balanceSheetHistory',
+        'token': TOKEN,
+    }
+
+    response = requests.get(url, params=params)
+
+   
+
+    if response.status_code == 200:
+        data = response.json()
+        if "results" in data and data["results"]:
+            ibovespa_data = data["results"][0]
+            fechamento_anterior = ibovespa_data["regularMarketPreviousClose"]
+            variacao = ibovespa_data["regularMarketChange"]
+            variacao_percentual = ibovespa_data["regularMarketChangePercent"]
+            fechamento = ibovespa_data["regularMarketPrice"]
+            
+            fechamento_anterior = f"{fechamento_anterior:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            variacao = f"{variacao:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            variacao_percentual = f"{variacao_percentual:.2f}"
+            fechamento = f"{fechamento:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            
+            return {
+                "fechamento_anterior": fechamento_anterior,
+                "variacao": variacao,
+                "variacao_percentual": variacao_percentual,
+                "fechamento": fechamento
+            }
+    return None  
+def get_historico_ibov_data():
+    url = "https://brapi.dev/api/quote/^BVSP"
+    params = {
+        'range': '1y',
+        'interval': '1d',
+        'fundamental': 'true',
+        'dividends': 'true',
+        'token': TOKEN,
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+
+        if "results" in data and data["results"]:
+            ibovespa_data = data["results"][0]
+            if "historicalDataPrice" in ibovespa_data:
+                historico = ibovespa_data["historicalDataPrice"]
+
+                datas = []
+                precos_fechamento = []
+
+                for registro in historico:
+                    # Converte o timestamp para uma data legível
+                    data_formatada = datetime.datetime.utcfromtimestamp(registro["date"]).strftime('%Y-%m-%d')
+                    fechamento = registro["close"]
+                    datas.append(data_formatada)
+                    precos_fechamento.append(fechamento)
+                    
+
+                return {"datas": datas, "fechamento": precos_fechamento}
+    
+    return None  # Se não receber 200 ou não houver "results", retorne None
